@@ -6,7 +6,7 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-FROM cimg/base:2023.07
+FROM debian:11-slim
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
@@ -38,13 +38,18 @@ RUN BUILD_DEPS="clang \
 		libxslt1-dev \
 		llvm \
 		llvm-dev \
+		pkg-config \
 		postgresql-server-dev-all \
 		python3-dev \
 		tcl-dev \
 		uuid-dev" && \
 	apt-get update && apt-get install -y --no-install-recommends \
+	ca-certificates \
+	curl \
+	git \
 	gosu \
 	locales \
+	make \
 	$BUILD_DEPS \
 	&& \
 	rm -rf /var/lib/apt/lists/* && \
