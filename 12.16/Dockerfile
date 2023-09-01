@@ -112,13 +112,13 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh /
 
 # Modify the postgres user to match the one used in the bitnami/postgresql image.
-RUN usermod -u 1001 -g root postgres
+RUN usermod -u 1001 -g 0 postgres
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh /docker-entrypoint-initdb.d/pg_cron.sh && \
 	mkdir -p /bitnami/postgresql && \
-	chown -R postgres:root /bitnami/postgresql && \
-	chown -R postgres:root /etc/postgresql && \
-	chown -R postgres:root /usr/local/bin/docker-entrypoint.sh
+	chown -R postgres:postgres /bitnami/postgresql && \
+	chown -R postgres:postgres /etc/postgresql && \
+	chown -R postgres:postgres /usr/local/bin/docker-entrypoint.sh
 
 USER 1001
 ENTRYPOINT ["docker-entrypoint.sh"]
