@@ -32,7 +32,6 @@ RUN BUILD_DEPS="clang \
 		libpam-dev \
 		libperl-dev \
 		libpython3-dev \
-		libreadline-dev \
 		libssl-dev \
 		libxml2-dev \
 		libxslt1-dev \
@@ -48,6 +47,7 @@ RUN BUILD_DEPS="clang \
 	curl \
 	git \
 	gosu \
+	libreadline-dev \
 	locales \
 	make \
 	$BUILD_DEPS \
@@ -88,7 +88,8 @@ RUN BUILD_DEPS="clang \
 	&& \
 	git clone --depth 1 https://github.com/citusdata/pg_cron.git /pg_cron && \
 	cd /pg_cron && make && PATH=$PATH make install && \
-	rm -rf /pg_cron
+	rm -rf /pg_cron && \
+	apt-get purge -y --auto-remove $BUILD_DEPS
 
 RUN curl -sSL "https://github.com/pgpartman/pg_partman/archive/v${PARTMAN_VERSION}.tar.gz" | tar -xz && \
 	cd pg_partman-${PARTMAN_VERSION} && make NO_BGW=1 install && \
@@ -116,7 +117,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh /docker-entrypoint-initdb.d/pg_
 	chown -R postgres:postgres /etc/postgresql && \
 	chown -R postgres:postgres /usr/local/bin/docker-entrypoint.sh
 
-RUN useradd -r -u 1001 -g root postgresql
+RUN usermod -u 1001 -g root postgres
 
 USER 1001
 ENTRYPOINT ["docker-entrypoint.sh"]
