@@ -19,7 +19,6 @@ ENV POSTGRES_DB=circle_test
 ENV PGTAP_VERSION 1.2.0
 ENV PARTMAN_VERSION 4.7.2
 
-USER root
 RUN BUILD_DEPS="clang \
 		dirmngr \
 		gnupg \
@@ -117,6 +116,9 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh /docker-entrypoint-initdb.d/pg_
 	chown -R postgres:postgres /etc/postgresql && \
 	chown -R postgres:postgres /usr/local/bin/docker-entrypoint.sh
 
+RUN useradd -r -u 1001 -g root postgresql
+
+USER 1001
 ENTRYPOINT ["docker-entrypoint.sh"]
 STOPSIGNAL SIGINT
 EXPOSE 5432
