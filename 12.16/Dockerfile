@@ -14,7 +14,8 @@ ENV PG_VER=12.16
 ENV PG_MAJOR=12
 ENV POSTGRES_HOST_AUTH_METHOD=trust
 ENV PATH /usr/lib/postgresql/$PG_MAJOR/bin:$PATH
-ENV PGDATA /var/lib/postgresql/data
+# We need to maintain the PGDATA directory from the bitnami/postgresql for compatibility reasons.
+ENV PGDATA /bitnami/postgresql/data
 ENV POSTGRES_DB=circle_test
 ENV PGTAP_VERSION 1.2.0
 ENV PARTMAN_VERSION 4.7.2
@@ -87,8 +88,7 @@ RUN BUILD_DEPS="clang \
 	&& \
 	git clone --depth 1 https://github.com/citusdata/pg_cron.git /pg_cron && \
 	cd /pg_cron && make && PATH=$PATH make install && \
-	rm -rf /pg_cron && \
-	apt-get purge -y --auto-remove $BUILD_DEPS
+	rm -rf /pg_cron
 
 RUN curl -sSL "https://github.com/pgpartman/pg_partman/archive/v${PARTMAN_VERSION}.tar.gz" | tar -xz && \
 	cd pg_partman-${PARTMAN_VERSION} && make NO_BGW=1 install && \
