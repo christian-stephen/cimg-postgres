@@ -24,7 +24,6 @@ RUN BUILD_DEPS="clang \
 		dirmngr \
 		gnupg \
 		libclang-dev \
-		libicu-dev \
 		libipc-run-perl \
 		libkrb5-dev \
 		libldap2-dev \
@@ -33,7 +32,6 @@ RUN BUILD_DEPS="clang \
 		libperl-dev \
 		libpython3-dev \
 		libssl-dev \
-		libxml2-dev \
 		libxslt1-dev \
 		llvm \
 		llvm-dev \
@@ -47,7 +45,9 @@ RUN BUILD_DEPS="clang \
 	curl \
 	git \
 	gosu \
+	libicu-dev \
 	libreadline-dev \
+	libxml2-dev \
 	locales \
 	make \
 	$BUILD_DEPS \
@@ -111,13 +111,14 @@ COPY docker-entrypoint.sh /usr/local/bin/
 # Backwards compatibility
 RUN ln -s usr/local/bin/docker-entrypoint.sh /
 
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh /docker-entrypoint-initdb.d/pg_cron.sh && \
-	mkdir -p /var/lib/postgresql && \
-	chown -R postgres:postgres /var/lib/postgresql && \
-	chown -R postgres:postgres /etc/postgresql && \
-	chown -R postgres:postgres /usr/local/bin/docker-entrypoint.sh
-
+# Modify the postgres user to match the one used in the bitnami/postgresql image.
 RUN usermod -u 1001 -g root postgres
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh /docker-entrypoint-initdb.d/pg_cron.sh && \
+	mkdir -p /bitnami/postgresql && \
+	chown -R postgres:root /bitnami/postgresql && \
+	chown -R postgres:root /etc/postgresql && \
+	chown -R postgres:root /usr/local/bin/docker-entrypoint.sh
 
 USER 1001
 ENTRYPOINT ["docker-entrypoint.sh"]
